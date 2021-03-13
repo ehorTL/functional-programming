@@ -43,14 +43,14 @@ getUser conn cid = do
 
 
 registerUser = do
-    putStrLn "Enter the data proposed\n Name: "
+    putStrLn "Enter the data proposed\nName:"
     nm <- getLine
-    putStrLn "Surname: "
+    putStrLn "Surname:"
     sn <- getLine
-    putStrLn "Passport code: "
+    putStrLn "Passport code:"
     pc <- getLine
-    putStrLn "Password: "
+    putStrLn "Password:"
     pw <- getLine
     c <- dbconn  
-    query c qInsertUser $ (nm, sn, pc, pw) :: IO [Only Int]
+    query c qInsertUser $ (nm, sn, pc, pw, (T.pack pw)) :: IO [Only Int]
 
