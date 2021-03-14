@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dae34a1233755ed0368ae327ed9488d32e29a7d9749e776b9d1dcd4aa69ebbc4
+-- hash: 68fb3790af0ecdfcaad8142712c164505e65c59b1362a0aa708589b9427b789f
 
 name:           lab1
 version:        0.1.0.0
@@ -31,6 +31,7 @@ library
       DbActions
       DbObjects
       Queries
+      Util
   other-modules:
       Paths_lab1
   hs-source-dirs:
