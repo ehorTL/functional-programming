@@ -44,13 +44,21 @@ instance FromRow Software where
     fromRow = Software <$> field <*> field <*> field <*> field
 
 data SoftDistribution = SoftDistribution {
-    id :: Int,
+    idsd :: Int,
     software_id :: Int,
     version_ :: String,
     path_to_distribution :: String,
     license_from :: String,
     license_to :: String
-} deriving (Show, Eq, Generic)
+} deriving (Eq, Generic)
+
+instance Show SoftDistribution where 
+    show d = "Software Distribution ID: " ++ (show $ idsd d) ++ "\n" ++
+        "Software ID: " ++ (show $ software_id d) ++ "\n" ++
+        "Version: " ++ version_ d ++ "\n" ++
+        "Path To Distribution: " ++ path_to_distribution d ++ "\n" ++
+        "License From: " ++ license_from d ++ "\n" ++
+        "License To: " ++  license_to d ++ "\n" 
 
 instance FromRow SoftDistribution where
     fromRow = SoftDistribution <$> field <*> field <*> field <*> field <*> field <*> field

@@ -51,9 +51,26 @@ registerProgramOrDistribution = do
   nors <- getLine
   case nors of 
     "s" -> do
-      return "str" :: IO String
+      softs <- searchProgramms
+      putStrLn $ softListToString softs
+      putStrLn "Enter the number of SOFTWARE unit you want to attach distribution to. Or 'q' to quit."
+      inp <- getLine
+      case inp of
+        "q" -> undefined
+        n -> do
+          putStrLn "Enter software version, path to distribution, license FROM date, license TO date"
+          vrsn <- getLine
+          pathToDistr <- getLine
+          lcnsFrom <- getLine
+          lcnsTo <- getLine
+          let nInt = read inp :: Int
+          c <- dbconn
+          sdid:_ <- query c qInsertSoftDistribution $ ((ids $ softs !! nInt), vrsn, pathToDistr, 
+            lcnsFrom, lcnsTo) :: IO [Only Int]
+          case sdid of
+            Only newId -> return $ "Distribution added, ID: " ++ show newId
     "n" -> do
-      putStrLn "Enter software name, terms and conditions, author, \
+      putStrLn "Enter software name, terms and conditions, author, version, \
         \path to distribution, license FROM date, license TO date"
       nm <- getLine
       tc <- getLine
@@ -82,6 +99,18 @@ searchProgramms = do
   c <- dbconn
   query c qSearchProgramms $ Only (T.pack (nm ++ "%")) :: IO [Software]
 
+searchProgrammsAndDistributions = do
+  progs <- searchProgramms :: IO [Software]
+  putStrLn $ softListToString progs
+  putStrLn "Enter the number of software or 'q' to quit"
+  inp <- getLine
+  case inp of 
+    "q" -> undefined
+    n -> do
+      let nInt = read n :: Int
+      c <- dbconn
+      query c qSelectDistributions $ Only (ids $ progs !! nInt) :: IO [SoftDistribution]
+
 getStatistics = do
   putStrLn "Show\n1. All\n2. For distribution\nq - quit"
   s <- getLine
@@ -97,5 +126,5 @@ getStatistics = do
     "q" -> undefined
     _ -> undefined
 
-showStatistics = do 
+showStatistics = do
   putStrLn "Show\n1. All\n2. For distribution\nq - quit"

@@ -25,3 +25,4 @@ qSearchProgramms = "select * from software where name_ like ?" :: Query
 
 qSelectStatisticsAll = "select * from stat" :: Query
 
+qSelectDistributions = "select * from soft_distribution where software_id=?" :: Query
