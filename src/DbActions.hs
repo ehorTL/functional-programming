@@ -7,6 +7,7 @@ import qualified Data.Configurator as C
 import qualified Control.Exception as E
 import Database.PostgreSQL.Simple
 import Data.String
+import Control.Exception
 
 import Queries
 import DbObjects
@@ -110,6 +111,14 @@ searchProgrammsAndDistributions = do
       let nInt = read n :: Int
       c <- dbconn
       query c qSelectDistributions $ Only (ids $ progs !! nInt) :: IO [SoftDistribution]
+
+searchAndDownloadDistribution = do
+  distrs <- searchProgrammsAndDistributions :: IO [SoftDistribution]
+  putStrLn $ distrListToString distrs
+  putStrLn "Enter the number of distribution to download:"
+  n <- try $ read <$> getLine :: IO (Either SomeException Int)
+  return "str"
+  
 
 getStatistics = do
   putStrLn "Show\n1. All\n2. For distribution\nq - quit"
