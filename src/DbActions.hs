@@ -3,6 +3,7 @@
 module DbActions where
 
 import qualified Data.Text as T
+import Text.Read as Tr
 import qualified Data.Configurator as C
 import qualified Control.Exception as E
 import Database.PostgreSQL.Simple
@@ -27,8 +28,21 @@ urlString = url >>= \x -> case x of
 dbconn :: IO Connection
 dbconn = urlString >>= \x -> connectPostgreSQL $ fromString x
 
-authorize :: String -> String -> IO Bool
-authorize login password = return True :: IO Bool
+-- returns id of authorized user 
+-- IO Either String Int
+authorize = do
+  putStrLn "Enter your passport code:"
+  pc <- getLine
+  putStrLn "Enter the password:"
+  pw <- getLine
+  c <- dbconn
+  users <- query c qSelectUserByPass $ (pc, pw, (T.pack pw)) :: IO [User]
+  case users of
+    [] -> do 
+      return (Left "Authorazion failed") 
+    _ -> do 
+      return (Right (idu $ head users))
+
 
 -- user registration function
 registerUser = do
@@ -112,12 +126,40 @@ searchProgrammsAndDistributions = do
       c <- dbconn
       query c qSelectDistributions $ Only (ids $ progs !! nInt) :: IO [SoftDistribution]
 
+-- searchAndDownloadDistribution :: IO String
 searchAndDownloadDistribution = do
   distrs <- searchProgrammsAndDistributions :: IO [SoftDistribution]
   putStrLn $ distrListToString distrs
   putStrLn "Enter the number of distribution to download:"
-  n <- try $ read <$> getLine :: IO (Either SomeException Int)
-  return "str"
+  n <- Tr.readEither <$> getLine :: IO (Either String Int)
+  case n of 
+    -- Left x -> return "Exit."
+    Left x -> return ()
+    Right num -> do
+      putStrLn "Download the distribution? [y/n]"
+      yn <- getLine
+      case yn of
+        "y" -> do
+          let idSDist = idsd $ distrs !! num
+          putStrLn "Authorization needed.\n"
+          eitherUserId <- authorize
+          case eitherUserId of
+            Left message -> putStrLn message
+            Right userId -> do
+              c <- dbconn
+              -- check if statiscits row exist for current distribution
+              distrStats <- query c qSelectStatById $ Only idSDist :: IO[Statistics]
+              if distrStats == [] then do
+                -- insert row in stat table
+                newStatId:_ <- query c qInsertStat1 $ Only idSDist :: IO [Only Int]
+                -- return "str" :: IO String
+                return ()
+                else do
+                  rowsUpdated <- execute c qUpdateStat $ (Only (idSDist :: Int))
+                  -- return "str" :: IO String
+                  return ()
+        -- _ -> return "Exit."
+        _ -> return ()
   
 
 getStatistics = do

@@ -64,7 +64,7 @@ instance FromRow SoftDistribution where
     fromRow = SoftDistribution <$> field <*> field <*> field <*> field <*> field <*> field
 
 data UserDistributionDownloads = UserDistributionDownloads{
-    id :: Int,
+    idudd :: Int,
     user_id :: Int,
     distribution_id :: Int,
     downloaded_on_date :: String 
@@ -74,7 +74,7 @@ instance FromRow UserDistributionDownloads where
     fromRow = UserDistributionDownloads <$> field <*> field <*> field <*> field
 
 data Statistics = Statistics {
-    id :: Int,
+    idstat :: Int,
     distribution_id :: Int,
     downloaded_by_users_times :: Int} deriving (Show, Eq, Generic)
 
