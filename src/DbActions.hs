@@ -32,16 +32,10 @@ hello = do
   [Only i] <- query_ conn "select 2 + 2"
   return i
 
-
 authorize :: String -> String -> IO Bool
 authorize login password = return True :: IO Bool
 
-getUser :: IO Connection -> Int -> IO [User]
-getUser conn cid = do
-  c <- conn
-  query c "SELECT * FROM users WHERE id = ?" $ (Only cid)
-
-
+-- user registration function
 registerUser = do
     putStrLn "Enter the data proposed\nName:"
     nm <- getLine
@@ -54,3 +48,30 @@ registerUser = do
     c <- dbconn  
     query c qInsertUser $ (nm, sn, pc, pw, (T.pack pw)) :: IO [Only Int]
 
+
+-- registerProgramOrDistribution = do
+
+
+-- getProgramInfoByName = 
+
+-- serching for Software entities strting from name entered
+searchProgramms = do
+  putStrLn "Enter the name or the name beginning of the program I'd like to find"
+  nm <- getLine
+  c <- dbconn
+  query c qSearchProgramms $ Only (T.pack (nm ++ "%")) :: IO [Software]
+
+getStatistics = do
+  putStrLn "Show\n1. All\n2. For distribution\nq - quit"
+  s <- getLine
+  case s of 
+    "1" -> do 
+      c <- dbconn 
+      query_ c qSelectStatisticsAll :: IO [Statistics]
+    "2" -> do 
+      progs <- searchProgramms :: IO [Software]
+      n <- read <$> getLine :: IO Int
+      undefined
+      -- progs[n] 
+    "q" -> undefined
+    _ -> undefined

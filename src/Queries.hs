@@ -21,4 +21,7 @@ qInsertUserDistributionDownloads = "insert into user_distribution_downloads (use
 qUpdateStat = "update stat set distribution_id=?, downloaded_by_users_times=? where id=?;" :: Query
 qInsertStat = "insert into stat (distribution_id, downloaded_by_users_times) values (?, 0) returning id;" :: Query
 
+qSearchProgramms = "select * from software where name_ like ?" :: Query
+
+qSelectStatisticsAll = "select * from stat" :: Query
 

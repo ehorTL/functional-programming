@@ -8,7 +8,7 @@ someop :: IO ()
 someop = return ()
 
 actions = ["1. Register user", 
-    "2. Register distribution", 
+    "2. Register program or distribution", 
     "3. Get programm info by name",
     "4. Search programms", 
     "5. Show statistics", 
