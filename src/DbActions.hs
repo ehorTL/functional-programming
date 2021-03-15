@@ -133,8 +133,8 @@ searchAndDownloadDistribution = do
   putStrLn "Enter the number of distribution to download:"
   n <- Tr.readEither <$> getLine :: IO (Either String Int)
   case n of 
-    -- Left x -> return "Exit."
-    Left x -> return ()
+    Left x -> do
+      putStrLn $ "Read error: " ++ x ++ "\nExit."
     Right num -> do
       putStrLn "Download the distribution? [y/n]"
       yn <- getLine
@@ -144,23 +144,24 @@ searchAndDownloadDistribution = do
           putStrLn "Authorization needed.\n"
           eitherUserId <- authorize
           case eitherUserId of
-            Left message -> putStrLn message
+            Left message -> do
+              putStrLn message
+              putStrLn "Exit"
             Right userId -> do
+              putStrLn "Successfully authorized"
               c <- dbconn
-              -- check if statiscits row exist for current distribution
               distrStats <- query c qSelectStatById $ Only idSDist :: IO[Statistics]
               if distrStats == [] then do
-                -- insert row in stat table
-                newStatId:_ <- query c qInsertStat1 $ Only idSDist :: IO [Only Int]
-                -- return "str" :: IO String
-                return ()
+                Only newStatId:_ <- query c qInsertStat1 $ Only idSDist :: IO [Only Int]
+                putStrLn $ "Statistics updated. New record inserted, ID: " ++ show newStatId --log
                 else do
                   rowsUpdated <- execute c qUpdateStat $ (Only (idSDist :: Int))
-                  -- return "str" :: IO String
-                  return ()
-        -- _ -> return "Exit."
-        _ -> return ()
-  
+                  putStrLn $ "Stattistics updated. Records updated: " ++ show rowsUpdated --log
+              Only userDownloadId:_ <- query c qInsertUserDistributionDownloads $ 
+                (userId, idSDist) :: IO [Only Int]
+              putStrLn $ "Distribution downloaded. Record ID: " ++ show userDownloadId
+        _ -> do
+              putStrLn "Exit"  
 
 getStatistics = do
   putStrLn "Show\n1. All\n2. For distribution\nq - quit"
