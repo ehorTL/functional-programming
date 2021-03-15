@@ -1,5 +1,5 @@
--- module CommandLineInterface (cli) where
-module CommandLineInterface where
+module CommandLineInterface (cli) where
+-- module CommandLineInterface where
 
 import Data.List
 import System.Exit as Se
@@ -20,6 +20,7 @@ cli :: IO ()
 cli = do 
     putStrLn $ "Enter the action you wold like to perform:\n" ++ (intercalate "\n" actions)
     option1 <- getLine
+    putStrLn "\nHandling input...\n"
     case option1 of
         "1" -> do 
             uid <- registerUser
@@ -34,8 +35,10 @@ cli = do
         _ -> do
             putStrLn "Command not recognized. Exit."
             Se.exitSuccess
-    putStrLn "Choose:\nq - quit\nr - start REPL again"
+    putStrLn "\nChoose:\nq - quit\nr - start REPL again"
     option2 <- getLine
     case option2 of
-        "r" -> cli
+        "r" -> do
+            putStrLn "\n\n"
+            cli
         _ -> putStrLn "Exit."
