@@ -24,7 +24,7 @@ cli = do
         "1" -> do 
             uid <- registerUser
             putStrLn $ "User registered, ID: " ++ (show uid)
-        "2" -> someop
+        "2" -> registerProgramOrDistributionV2
         "3" -> searchAndDownloadDistribution
         "4" -> do 
             showStatistics

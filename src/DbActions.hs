@@ -106,6 +106,49 @@ registerProgramOrDistribution = do
       return "str" :: IO String
     _ -> return "str" :: IO String
 
+registerProgramOrDistributionV2 :: IO ()
+registerProgramOrDistributionV2 = do
+  putStrLn "Add (n)ew software or (s)earch to add distribution?\nq-quit"
+  nors <- getLine
+  putStrLn "Handling input...\n"
+  case nors of 
+    "s" -> do
+      softs <- searchProgramms
+      putStrLn "\nResults:\n"
+      putStrLn $ softListToString softs
+      putStrLn "Enter the number of SOFTWARE unit you want to attach distribution to. Or 'q' to quit."
+      maybeNumber <- Tr.readMaybe <$> getLine :: IO (Maybe Int)
+      case maybeNumber of
+        Nothing -> do
+          putStrLn "Exit"
+        Just softNumber-> do
+          putStrLn "Enter software version, path to distribution, license FROM date, license TO date"
+          vrsn <- getLine
+          pathToDistr <- getLine
+          lcnsFrom <- getLine
+          lcnsTo <- getLine
+          c <- dbconn
+          Only sdid:_ <- query c qInsertSoftDistribution $ ((ids $ softs !! softNumber), vrsn, pathToDistr, 
+            lcnsFrom, lcnsTo) :: IO [Only Int]
+          putStrLn $ "Distribution added, ID: " ++ show sdid
+    "n" -> do
+      putStrLn "Enter software name, terms and conditions, author, version, \
+        \path to distribution, license FROM date, license TO date"
+      nm <- getLine
+      tc <- getLine
+      athr <- getLine
+      vrsn <- getLine
+      pathToDistr <- getLine
+      lcnsFrom <- getLine
+      lcnsTo <- getLine
+      c <- dbconn
+      Only sid:_ <- query c qInsertSoftware $ (nm, tc, athr) :: IO [Only Int]
+      Only sdid:_ <- query c qInsertSoftDistribution $ (sid, vrsn, pathToDistr, 
+        lcnsFrom, lcnsTo) :: IO [Only Int]
+      putStrLn $ "Distribution registered, ID: " ++ show sdid ++ 
+          "Software info added, ID: " ++ show sid
+    _ -> putStrLn "Exit."
+
 
 -- serching for Software entities strting from name entered
 searchProgramms = do
