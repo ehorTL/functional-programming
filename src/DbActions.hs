@@ -29,7 +29,7 @@ dbconn :: IO Connection
 dbconn = urlString >>= \x -> connectPostgreSQL $ fromString x
 
 -- returns id of authorized user 
-authorize :: IO (Either Stirng Int)
+authorize :: IO (Either String Int)
 authorize = do
   putStrLn "Enter your passport code:"
   pc <- getLine
