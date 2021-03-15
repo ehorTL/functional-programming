@@ -179,5 +179,28 @@ getStatistics = do
     "q" -> undefined
     _ -> undefined
 
+showStatistics :: IO ()
 showStatistics = do
-  putStrLn "Show\n1. All\n2. For distribution\nq - quit"
+  putStrLn "Show\n1. All\n2. For distribution (ID needed)\nq - quit"
+  op1 <- Tr.readMaybe <$> getLine :: IO (Maybe Int)
+  putStrLn "Handling input...\n"
+  case op1 of
+    Just x -> do
+      case x of 
+        1 -> do
+          c <- dbconn 
+          stats <- query_ c qSelectStatisticsAll :: IO [Statistics]
+          putStrLn $ statRowToString stats
+        2 -> do
+          putStrLn "Enter distributon ID you want to show statistics of:"
+          maybeId <- Tr.readMaybe <$> getLine :: IO (Maybe Int)
+          putStrLn "\n"
+          case maybeId of
+            Just idInt -> do
+              c <- dbconn
+              stats <- query c qSelectStatById $ (Only idInt) :: IO [Statistics]
+              putStrLn $ statRowToString stats
+            Nothing -> do
+              putStrLn "Unexpected input. Exit."
+    Nothing -> do
+      putStrLn "Exit."

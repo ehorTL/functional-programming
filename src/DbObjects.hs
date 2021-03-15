@@ -75,8 +75,13 @@ instance FromRow UserDistributionDownloads where
 
 data Statistics = Statistics {
     idstat :: Int,
-    distribution_id :: Int,
-    downloaded_by_users_times :: Int} deriving (Show, Eq, Generic)
+    distribution_id_ :: Int,
+    downloaded_by_users_times :: Int} deriving (Eq, Generic)
+
+instance Show Statistics where
+    show s = "ID: " ++ (show $ idstat s) ++ "\n" ++
+        "Distribution ID: " ++ (show $ distribution_id_ s) ++ "\n" ++
+        "Downloaded times: " ++ (show $ downloaded_by_users_times s) ++ "\n"
 
 instance FromRow Statistics where
     fromRow = Statistics <$> field <*> field <*> field
