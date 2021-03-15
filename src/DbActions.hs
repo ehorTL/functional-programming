@@ -126,7 +126,7 @@ searchProgrammsAndDistributions = do
       c <- dbconn
       query c qSelectDistributions $ Only (ids $ progs !! nInt) :: IO [SoftDistribution]
 
--- searchAndDownloadDistribution :: IO String
+searchAndDownloadDistribution :: IO ()
 searchAndDownloadDistribution = do
   distrs <- searchProgrammsAndDistributions :: IO [SoftDistribution]
   putStrLn $ distrListToString distrs
@@ -162,6 +162,7 @@ searchAndDownloadDistribution = do
               putStrLn $ "Distribution downloaded. Record ID: " ++ show userDownloadId
         _ -> do
               putStrLn "Exit"  
+
 
 getStatistics = do
   putStrLn "Show\n1. All\n2. For distribution\nq - quit"

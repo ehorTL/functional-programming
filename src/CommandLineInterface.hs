@@ -2,6 +2,9 @@
 module CommandLineInterface where
 
 import Data.List
+import System.Exit as Se
+import Text.Read
+
 import DbActions
 
 someop :: IO ()
@@ -9,7 +12,7 @@ someop = return ()
 
 actions = ["1. Register user", 
     "2. Register program or distribution", 
-    "3. Search programms", 
+    "3. Search programms / download distribution",
     "4. Show statistics",
     "q - quit"]
 
@@ -22,14 +25,17 @@ cli = do
             uid <- registerUser
             putStrLn $ "User registered, ID: " ++ (show uid)
         "2" -> someop
-        "3" -> someop
-        "4" -> someop
-        "5" -> do 
+        "3" -> searchAndDownloadDistribution
+        "4" -> do 
             showStatistics
-        "q" -> undefined
-        _ -> error "Unexpected input. Exit."
+        "q" -> do
+            putStrLn "Exit. The program is terminating..."
+            Se.exitSuccess
+        _ -> do
+            putStrLn "Command not recognized. Exit."
+            Se.exitSuccess
     putStrLn "Choose:\nq - quit\nr - start REPL again"
     option2 <- getLine
     case option2 of
         "r" -> cli
-        _ -> undefined
+        _ -> putStrLn "Exit."
